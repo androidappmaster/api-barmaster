@@ -53,6 +53,11 @@ server.post("/user", function(req,res){
 
 server.get('/user', function(req, res) {
 
+	if(authorization != applicationToken){
+		res.status(403).send("Unauthorized");
+		return
+	}
+	
     userModel.find({}, function (err, users) {
        res.send(users);
    });
@@ -60,4 +65,4 @@ server.get('/user', function(req, res) {
 });
 
 console.log("Server started");
-server.listen(3000);
+server.listen(9999);
