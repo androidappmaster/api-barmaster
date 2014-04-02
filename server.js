@@ -53,6 +53,8 @@ server.post("/user", function(req,res){
 
 server.get('/user', function(req, res) {
 
+	var authorization = req.get('Authorization');
+
 	if(authorization != applicationToken){
 		res.status(403).send("Unauthorized");
 		return
