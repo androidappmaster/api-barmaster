@@ -1,0 +1,21 @@
+{
+  "name": "node",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express.io": "~1.1.13",
+    "mongoose": "~3.8.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@adrian.gldos.es:hello-world/node.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
