@@ -5,12 +5,15 @@ var models = require('./models');
 var SchemaTypes = mongoose.Schema.Types;
 //Load schemea library from models
 var schema = models.Schema;
+var ObjectId = schema.ObjectId;
 
-var userSchema = schema({
+var ratingSchema = schema({
 
-	name : String,
-	time : { type: Date, default: Date.now}
+	rating : Number,
+    comment : String,
+    hotel : ObjectId
 });
 
-var user = models.model('user', userSchema);
-module.exports = user;
+
+var rating = models.model('rating', ratingSchema);
+module.exports = rating;

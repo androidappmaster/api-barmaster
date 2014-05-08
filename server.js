@@ -4,30 +4,27 @@ var server = express().http().io();
 server.use(express.urlencoded());
 
 //Import models
-var userModel = require("./model/user");
+var hotelModel = require("./model/hotel");
+var ratingModel = require("./model/rating");
 
+/**
+ * POST HOTEL INTO DATABASE
+ */
+server.post("/hotel", function(req,res){
 
-//Application token for minnimun secure
-var applicationToken = "GtJqUn0AN5076anp5F53x35k29rTt4c1";
-
-
-server.post("/user", function(req,res){
-
-	console.log("Adding user");
-
-	//Headers
-	var authorization = req.get('Authorization');
-
+	console.log("Adding hotel");
 
 	//Parameters
 	var name = req.body.name
-	var date = req.body.date;
+	var city = req.body.city
+	var stars = req.body.stars
+	var company = req.body.company
+	var imageUrl = req.body.imageUrl
+    var lattitude = req.body.lattitude
+    var longittude = req.body.longittude
 
 
-	if(authorization != applicationToken){
-		res.status(403).send("Unauthorized");
-		return
-	}
+
 
 	//|| typeof date == 'undefined'
 	if(typeof name == 'undefined'  ){
@@ -35,36 +32,103 @@ server.post("/user", function(req,res){
 		return
 	}
 
-	//Create user 
-	var user = new userModel({
-		name : name	
+	//Create hotel
+	var hotel = new hotelModel({
+		name : name,
+        city : city,
+        stars : stars,
+        company: company,
+        imageUrl: imageUrl,
+        geo : [longittude,lattitude]
 	});
 
-	//Save the user in database
-	user.save(function(error){
+	//Save the hotel in database
+    hotel.save(function(error){
 		if(error){
 			console.log(error);
 			res.status(500).send("Error when save in database");
 		}
-		res.status(200).send(user);
+		res.status(200).send(hotel);
 	});
 	
 });
 
-server.get('/user', function(req, res) {
+/**
+ * GET A LIST OF HOTELS
+ */
+server.get('/hotel', function(req, res) {
 
-	var authorization = req.get('Authorization');
 
-	if(authorization != applicationToken){
-		res.status(403).send("Unauthorized");
-		return
-	}
 	
-    userModel.find({}, function (err, users) {
-       res.send(users);
+    hotelModel.find({}, function (err, hotels) {
+       res.send(hotels);
    });
 
 });
+
+
+/**
+ *  SEARCH HOTEL BY NEAR OF POINT IN KM
+ */
+server.get('/hotel/near', function(req,res){
+    var lattitude = req.param('lattitude')
+    var longittude = req.param('longittude')
+    var distance = req.param('distance')
+
+    console.log(lattitude)
+    console.log(longittude)
+
+    var hotels = new hotelModel({geo: [longittude,lattitude]});
+
+    hotels.findNear(distance,function(error,results){
+        res.send(results);
+    });
+
+
+});
+
+/**
+ *  Get hotel rating
+ */
+
+server.get('/hotel/:id/rating', function(req,res){
+    ratingModel.find({hotel:req.param('id')},function(error,result){
+        res.send(result);
+    })
+});
+
+
+/**
+ *  Add rating to hotel
+ */
+server.post('/hotel/:id/rating', function(req,res){
+
+    var rating = req.param('rating')
+    var comment = req.param('comment')
+
+
+            var rating = new ratingModel({
+                rating: rating,
+                comment: comment,
+                hotel: req.param('id')
+            });
+
+
+
+           //save rating
+            rating.save(function(error){
+               if(error){
+                   console.log(error);
+                   res.send("Las liao parda")
+               }
+               res.send(rating);
+           });
+
+
+});
+
+
+
 
 console.log("Server started");
 server.listen(9999);
