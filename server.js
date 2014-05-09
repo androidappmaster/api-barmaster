@@ -7,6 +7,8 @@ server.use(express.urlencoded());
 var hotelModel = require("./model/hotel");
 var ratingModel = require("./model/rating");
 
+//TODO Create funtions in vars, routing , auth, cath erros, error response codes.
+
 /**
  * POST HOTEL INTO DATABASE
  */
@@ -58,9 +60,11 @@ server.post("/hotel", function(req,res){
  */
 server.get('/hotel', function(req, res) {
 
-
-	
-    hotelModel.find({}, function (err, hotels) {
+    hotelModel.find({}, function (error, hotels) {
+        if(error){
+            console.log(error);
+            res.status(500).send("Hotel not found");
+        }
        res.send(hotels);
    });
 
@@ -81,6 +85,11 @@ server.get('/hotel/near', function(req,res){
     var hotels = new hotelModel({geo: [longittude,lattitude]});
 
     hotels.findNear(distance,function(error,results){
+
+        if(error){
+            console.log(error);
+            res.status(500).send("Hotel not found");
+        }
         res.send(results);
     });
 
@@ -88,11 +97,72 @@ server.get('/hotel/near', function(req,res){
 });
 
 /**
- *  Get hotel rating
+ *  Update Hotel
+ */
+server.put("/hotel/:id", function(req,res){
+
+    //Parameters
+    var id = req.param('id');
+    var name = req.body.name
+    var city = req.body.city
+    var stars = req.body.stars
+    var company = req.body.company
+    var imageUrl = req.body.imageUrl
+    var lattitude = req.body.lattitude
+    var longittude = req.body.longittude
+
+    hotelModel.findById(req.param('id'),function(error,result){
+
+        result.name = name;
+        result.city = city;
+        result.stars = stars;
+        result.company = company;
+        result.imageUrl = imageUrl;
+        result.latitude = lattitude;
+        result.longitude = longittude;
+
+        //Save the hotel in database
+        result.save(function(error){
+            if(error){
+                console.log(error);
+                res.status(500).send("Error when save in database");
+            }
+            res.status(200).send(result);
+        });
+    });
+
+
+
+});
+
+/**
+ * Get hotel by id
+ */
+server.get("/hotel/:id",function(req,res){
+
+    var id = req.param('id');
+
+    hotelModel.find({_id:req.param('id')},function(error,result){
+        if(error){
+            console.log(error);
+            res.status(500).send("Hotel not found");
+        }
+        res.send(result);
+    });
+
+});
+
+/**
+ *  Get hotel ratings
  */
 
 server.get('/hotel/:id/rating', function(req,res){
+
     ratingModel.find({hotel:req.param('id')},function(error,result){
+        if(error){
+            console.log(error);
+            res.status(500).send("Hotel not found");
+        }
         res.send(result);
     })
 });
@@ -119,7 +189,7 @@ server.post('/hotel/:id/rating', function(req,res){
             rating.save(function(error){
                if(error){
                    console.log(error);
-                   res.send("Las liao parda")
+                   res.send("Error saving rating")
                }
                res.send(rating);
            });
