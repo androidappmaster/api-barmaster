@@ -1,9 +1,10 @@
 var express = require('express.io');
 var server = express().http().io();
-//For parameters 
+
+// For parameters 
 server.use(express.urlencoded());
 
-//Import models
+// Import models
 var hotelModel = require("./model/local");
 var ratingModel = require("./model/rating");
 
@@ -16,7 +17,7 @@ server.post("/locals", function(req,res){
 
 	console.log("Adding local");
 
-	//Parameters
+	// Parameters
 	var name = req.body.name
 	var city = req.body.city
 	var stars = req.body.stars
@@ -24,8 +25,6 @@ server.post("/locals", function(req,res){
 	var imageUrl = req.body.imageUrl
     var lattitude = req.body.lattitude
     var longittude = req.body.longittude
-
-
 
 
 	//|| typeof date == 'undefined'
@@ -48,7 +47,7 @@ server.post("/locals", function(req,res){
     local.save(function(error){
 		if(error){
 			console.log(error);
-			res.status(500).send("Error when save in database");
+			res.status(500).send("Error when saving into database");
 		}
 		res.status(200).send(local);
 	});
@@ -63,7 +62,7 @@ server.get('/locals', function(req, res) {
     hotelModel.find({}, function (error, hotels) {
         if(error){
             console.log(error);
-            res.status(500).send("Local not found");
+            res.status(404).send("Local not found");
         }
        res.send(hotels);
    });
@@ -88,7 +87,7 @@ server.get('/locals/near', function(req,res){
 
         if(error){
             console.log(error);
-            res.status(500).send("Hotel not found");
+            res.status(404).send("Local not found");
         }
         res.send(results);
     });
@@ -101,7 +100,7 @@ server.get('/locals/near', function(req,res){
  */
 server.put("/locals/:id", function(req,res){
 
-    //Parameters
+    // Parameters
     var id = req.param('id');
     var name = req.body.name
     var city = req.body.city
@@ -143,7 +142,7 @@ server.get("/locals/:id",function(req,res){
     localModel.find({_id:req.param('id')},function(error,result){
         if(error){
             console.log(error);
-            res.status(500).send("Local not found");
+            res.status(404).send("Local not found");
         }
         res.send(result);
     });
@@ -158,7 +157,7 @@ server.get('/locals/:id/rating', function(req,res){
     ratingModel.find({local:req.param('id')},function(error,result){
         if(error){
             console.log(error);
-            res.status(500).send("Hotel not found");
+            res.status(404).send("Local not found");
         }
         res.send(result);
     })
@@ -183,7 +182,7 @@ server.post('/locals/:id/rating', function(req,res){
     rating.save(function(error) {
         if(error) {
             console.log(error);
-            res.send("Error saving rating")
+            res.status(500).send("Error saving rating")
         }
         res.send(rating);
     });
