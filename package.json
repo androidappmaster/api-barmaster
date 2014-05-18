@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@adrian.gldos.es:hello-world/node.git"
+    "url": "git@github.com:androidappmaster/api-barmaster.git"
   },
   "author": "",
   "license": "ISC"
