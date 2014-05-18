@@ -7,14 +7,14 @@ server.use(express.urlencoded());
 var hotelModel = require("./model/local");
 var ratingModel = require("./model/rating");
 
-//TODO Create funtions in vars, routing , auth, cath erros, error response codes.
+// TODO Create funtions in vars, routing , auth, cath erros, error response codes.
 
 /**
- * POST HOTEL INTO DATABASE
+ * POST LOCAL INTO DATABASE
  */
-server.post("/hotel", function(req,res){
+server.post("/locals", function(req,res){
 
-	console.log("Adding hotel");
+	console.log("Adding local");
 
 	//Parameters
 	var name = req.body.name
@@ -34,8 +34,8 @@ server.post("/hotel", function(req,res){
 		return
 	}
 
-	//Create hotel
-	var hotel = new hotelModel({
+	// Create local
+	var local = new localModel({
 		name : name,
         city : city,
         stars : stars,
@@ -44,13 +44,13 @@ server.post("/hotel", function(req,res){
         geo : [longittude,lattitude]
 	});
 
-	//Save the hotel in database
-    hotel.save(function(error){
+	// Save the local in database
+    local.save(function(error){
 		if(error){
 			console.log(error);
 			res.status(500).send("Error when save in database");
 		}
-		res.status(200).send(hotel);
+		res.status(200).send(local);
 	});
 	
 });
@@ -58,12 +58,12 @@ server.post("/hotel", function(req,res){
 /**
  * GET A LIST OF HOTELS
  */
-server.get('/hotel', function(req, res) {
+server.get('/locals', function(req, res) {
 
     hotelModel.find({}, function (error, hotels) {
         if(error){
             console.log(error);
-            res.status(500).send("Hotel not found");
+            res.status(500).send("Local not found");
         }
        res.send(hotels);
    });
@@ -74,7 +74,7 @@ server.get('/hotel', function(req, res) {
 /**
  *  SEARCH HOTEL BY NEAR OF POINT IN KM
  */
-server.get('/hotel/near', function(req,res){
+server.get('/locals/near', function(req,res){
     var lattitude = req.param('lattitude')
     var longittude = req.param('longittude')
     var distance = req.param('distance')
@@ -97,9 +97,9 @@ server.get('/hotel/near', function(req,res){
 });
 
 /**
- *  Update Hotel
+ *  Update local
  */
-server.put("/hotel/:id", function(req,res){
+server.put("/locals/:id", function(req,res){
 
     //Parameters
     var id = req.param('id');
@@ -111,7 +111,7 @@ server.put("/hotel/:id", function(req,res){
     var lattitude = req.body.lattitude
     var longittude = req.body.longittude
 
-    hotelModel.findById(req.param('id'),function(error,result){
+    localModel.findById(req.param('id'),function(error,result){
 
         result.name = name;
         result.city = city;
@@ -121,7 +121,7 @@ server.put("/hotel/:id", function(req,res){
         result.latitude = lattitude;
         result.longitude = longittude;
 
-        //Save the hotel in database
+        // Save the local in database
         result.save(function(error){
             if(error){
                 console.log(error);
@@ -131,21 +131,19 @@ server.put("/hotel/:id", function(req,res){
         });
     });
 
-
-
 });
 
 /**
- * Get hotel by id
+ * Get local by id
  */
-server.get("/hotel/:id",function(req,res){
+server.get("/locals/:id",function(req,res){
 
     var id = req.param('id');
 
-    hotelModel.find({_id:req.param('id')},function(error,result){
+    localModel.find({_id:req.param('id')},function(error,result){
         if(error){
             console.log(error);
-            res.status(500).send("Hotel not found");
+            res.status(500).send("Local not found");
         }
         res.send(result);
     });
@@ -153,12 +151,11 @@ server.get("/hotel/:id",function(req,res){
 });
 
 /**
- *  Get hotel ratings
+ *  Get local ratings
  */
+server.get('/locals/:id/rating', function(req,res){
 
-server.get('/hotel/:id/rating', function(req,res){
-
-    ratingModel.find({hotel:req.param('id')},function(error,result){
+    ratingModel.find({local:req.param('id')},function(error,result){
         if(error){
             console.log(error);
             res.status(500).send("Hotel not found");
@@ -169,36 +166,29 @@ server.get('/hotel/:id/rating', function(req,res){
 
 
 /**
- *  Add rating to hotel
+ *  Add rating to local
  */
-server.post('/hotel/:id/rating', function(req,res){
+server.post('/locals/:id/rating', function(req,res){
 
     var rating = req.param('rating')
     var comment = req.param('comment')
 
+    var rating = new ratingModel({
+        rating: rating,
+        comment: comment,
+        local: req.param('id')
+    });
 
-            var rating = new ratingModel({
-                rating: rating,
-                comment: comment,
-                hotel: req.param('id')
-            });
-
-
-
-           //save rating
-            rating.save(function(error){
-               if(error){
-                   console.log(error);
-                   res.send("Error saving rating")
-               }
-               res.send(rating);
-           });
-
+    // save rating
+    rating.save(function(error) {
+        if(error) {
+            console.log(error);
+            res.send("Error saving rating")
+        }
+        res.send(rating);
+    });
 
 });
-
-
-
 
 console.log("Server started");
 server.listen(9999);
