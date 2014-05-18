@@ -5,7 +5,7 @@ var server = express().http().io();
 server.use(express.urlencoded());
 
 // Import models
-var hotelModel = require("./model/local");
+var localModel = require("./model/local");
 var ratingModel = require("./model/rating");
 
 // TODO Create funtions in vars, routing , auth, cath erros, error response codes.
@@ -59,7 +59,7 @@ server.post("/locals", function(req,res){
  */
 server.get('/locals', function(req, res) {
 
-    hotelModel.find({}, function (error, hotels) {
+    localModel.find({}, function (error, hotels) {
         if(error){
             console.log(error);
             res.status(404).send("Local not found");
@@ -81,9 +81,9 @@ server.get('/locals/near', function(req,res){
     console.log(lattitude)
     console.log(longittude)
 
-    var hotels = new hotelModel({geo: [longittude,lattitude]});
+    var locals = new localModel({geo: [longittude,lattitude]});
 
-    hotels.findNear(distance,function(error,results) {
+    locals.findNear(distance,function(error,results) {
         if(error) {
             console.log(error);
             res.status(404).send("Local not found");
