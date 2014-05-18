@@ -4,7 +4,7 @@ var server = express().http().io();
 server.use(express.urlencoded());
 
 //Import models
-var hotelModel = require("./model/hotel");
+var hotelModel = require("./model/local");
 var ratingModel = require("./model/rating");
 
 //TODO Create funtions in vars, routing , auth, cath erros, error response codes.
