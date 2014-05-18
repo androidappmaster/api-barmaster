@@ -150,7 +150,7 @@ server.get("/locals/:id",function(req,res){
 /**
  *  Get local ratings
  */
-server.get('/locals/:id/rating', function(req,res){
+server.get('/locals/:id/comments', function(req,res){
 
     ratingModel.find({local:req.param('id')},function(error,result){
         if(error){
@@ -165,7 +165,7 @@ server.get('/locals/:id/rating', function(req,res){
 /**
  *  Add rating to local
  */
-server.post('/locals/:id/rating', function(req,res){
+server.post('/locals/:id/comments', function(req,res){
 
     var rating = req.param('rating')
     var comment = req.param('comment')
@@ -180,7 +180,7 @@ server.post('/locals/:id/rating', function(req,res){
     rating.save(function(error) {
         if(error) {
             console.log(error);
-            res.status(500).send("Error saving rating")
+            res.status(500).send("Error saving comment")
         }
         res.send(rating);
     });
