@@ -28,7 +28,7 @@ server.post("/locals", function(req,res){
 
 
 	//|| typeof date == 'undefined'
-	if(typeof name == 'undefined'  ){
+	if ( typeof name == 'undefined' ){
 		res.status(400).send("Missing some parameters");
 		return
 	}
@@ -83,15 +83,13 @@ server.get('/locals/near', function(req,res){
 
     var hotels = new hotelModel({geo: [longittude,lattitude]});
 
-    hotels.findNear(distance,function(error,results){
-
-        if(error){
+    hotels.findNear(distance,function(error,results) {
+        if(error) {
             console.log(error);
             res.status(404).send("Local not found");
         }
         res.send(results);
     });
-
 
 });
 
@@ -121,8 +119,8 @@ server.put("/locals/:id", function(req,res){
         result.longitude = longittude;
 
         // Save the local in database
-        result.save(function(error){
-            if(error){
+        result.save(function(error) {
+            if(error) {
                 console.log(error);
                 res.status(500).send("Error when save in database");
             }
