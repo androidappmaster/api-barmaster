@@ -33,5 +33,5 @@ localSchema.methods.findById = function() {
 };
 
 
-var local = models.model('local', hotelSchema);
+var local = models.model('local', localSchema);
 module.exports = local;
